@@ -31,6 +31,7 @@ import {
 
 // Import the ParticleAuth type
 import { ParticleAuth } from '../types';
+import { ThemeProvider } from '../src/components/ThemeContext';
 
 // Create a client
 export const queryClient = new QueryClient();
@@ -121,18 +122,21 @@ function MyApp({ Component, pageProps }: AppProps) {
     { ssr: false }, // This will load the component only on client side
   );
 
-  const isParticleEnabled = process.env.NEXT_PUBLIC_IS_PARTICLE_ENABLED === 'true';
+  const isParticleEnabled =
+    process.env.NEXT_PUBLIC_IS_PARTICLE_ENABLED === 'true';
 
   const content = (
-    <QueryClientProvider client={queryClient}>
-      <Head>
-        <title>Web3 Media Player</title>
-      </Head>
-      <div className="flex flex-col w-full min-h-screen max-w-full">
-        <Header handleToggleClick={toggleTheme} />
-        <Component {...pageProps} />
-      </div>
-    </QueryClientProvider>
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <Head>
+          <title>Web3 Media Player</title>
+        </Head>
+        <div className="flex flex-col w-full min-h-screen max-w-full">
+          <Header handleToggleClick={toggleTheme} />
+          <Component {...pageProps} />
+        </div>
+      </QueryClientProvider>
+    </ThemeProvider>
   );
 
   return (
@@ -194,7 +198,6 @@ function MyApp({ Component, pageProps }: AppProps) {
       </RecoilRoot>
     </BlockchainContext.Provider>
   );
-
 }
 
 export default MyApp;
