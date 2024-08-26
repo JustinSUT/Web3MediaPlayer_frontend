@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, useRef } from 'react';
+import React, { useContext, useState, useEffect, useRef, useLayoutEffect } from 'react';
 const Gun = require('gun');
 const SEA = require('gun/sea');
 import axios from 'axios';
@@ -614,7 +614,7 @@ const Index = () => {
     }
 
     if (!loggedIn) throw new Error('logInOrCreateNewUser: login failed');
-    if (smartAccount && userData?.token) {
+    if (smartAccountAddress && userData) {
       fetchColor();
     }
   };
@@ -694,9 +694,9 @@ const Index = () => {
     return isDisabled ? (
       <div className={className}>
         <Button
-          variant="primary"
+          variant=""
           size="medium"
-          className="p-1 text-2xl font-semibold bg-button"
+          className="p-1 text-2xl font-semibold "
           disabled={true}
           style={{ backgroundColor: color }}
         >
@@ -706,9 +706,9 @@ const Index = () => {
     ) : (
       <Link href={href} className={className}>
         <Button
-          variant="primary"
+          variant=""
           size="medium"
-          className="p-1 text-2xl font-semibold bg-button"
+          className="p-1 text-2xl font-semibold "
           disabled={false}
           style={{ backgroundColor: color }}
         >
@@ -747,19 +747,44 @@ const Index = () => {
       } else {
         console.error('Error setting up request:', error.message);
       }
-      throw error;
+      // throw error;
     }
   };
 
-  useEffect(() => {
-    document.documentElement.style.setProperty('--button-color', colors.buttonColor);
-    document.documentElement.style.setProperty('--background-color', colors.backgroundColor);
-    document.documentElement.style.setProperty('--text-color', colors.textColor);
+  useLayoutEffect(() => {
+    document.documentElement.style.setProperty(
+      '--button-color',
+      colors?.buttonColor ?? "#007bff" // Light mode button color
+    );
+    document.documentElement.style.setProperty(
+      '--background-color',
+      colors?.backgroundColor ?? "#f8f9fa" // Light mode background color
+    );
+    document.documentElement.style.setProperty(
+      '--text-color',
+      colors?.textColor ?? "#212529" // Light mode text color
+    );
+    document.documentElement.style.setProperty(
+      '--dark-button-color',
+      colors?.darkButtonColor ?? "#1d72b8" // Dark mode button color
+    );
+    document.documentElement.style.setProperty(
+      '--dark-background-color',
+      colors?.darkBackgroundColor ?? "#1c1c1c" // Dark mode background color
+    );
+    document.documentElement.style.setProperty(
+      '--dark-text-color',
+      colors?.darkTextColor ?? "#e0e0e0" // Dark mode text color
+    );
   }, [colors]);
   
+  
+
   return (
-    <div className="p-4 max-w-6xl mx-auto bg-background dark:bg-background">
-      <h1 className="uppercase text-2xl font-bold mb-5 text-text">Web3 Media Player</h1>
+    <div className="p-4 max-w-6xl mx-auto bg-background dark:bg-dark-background">
+      <h1 className="uppercase text-2xl font-bold mb-5 text-text dark:text-dark-text">
+        Web3 Media Player
+      </h1>
 
       {userName && smartAccount && (
         <h2 className="text-xl  font-semibold mb-7">User: {userName}</h2>
@@ -767,10 +792,9 @@ const Index = () => {
 
       {!state.installedSnap && (
         <Button
-          variant="primary"
           size="medium"
           onClick={handleConnectClick}
-          className="p-1 h-8 col-span-1 mb-2 bg-button"
+          className="p-1 h-8 col-span-1 mb-2 "
         >
           Connect Snap
         </Button>
@@ -779,9 +803,9 @@ const Index = () => {
       {!loading && !smartAccount && (
         <Button
           onClick={handleLogin}
-          variant="primary"
+          variant=""
           size="medium"
-          className="mt-4 text-xl font-semibold bg-button"
+          className="mt-4 text-xl font-semibold "
         >
           Log in
         </Button>
@@ -792,14 +816,14 @@ const Index = () => {
       </button> */}
       {loading && <p>Loading Smart Account...</p>}
       {smartAccount && (
-        <h2 className="text-text" >Smart Account: {smartAccountAddress}</h2>
+        <h2 className="text-text dark:text-dark-text">Smart Account: {smartAccountAddress}</h2>
       )}
       {smartAccount && (
         <Button
           onClick={handleLogout}
-          variant="primary"
+          variant=""
           size="medium"
-          className="mt-2 mb-6 bg-button"
+          className="mt-2 mb-6 "
         >
           Log out
         </Button>
@@ -838,9 +862,9 @@ const Index = () => {
 
       <div className="mt-6 mb-10">
         <Button
-          variant="primary"
+          variant=""
           size="medium"
-          className="text-xl mt-4 bg-button"
+          className="text-xl mt-4 "
           disabled={isDisabled}
           onClick={handleLoadAddresses}
         >
@@ -870,12 +894,12 @@ const Index = () => {
       </div>
       {/* Replaced Heading with h1 */}
       <div className="grid grid-cols-12">
-        <p className="col-span-12 ml-4 mb-2 text-text">
+        <p className="col-span-12 ml-4 mb-2 text-text dark:text-dark-text">
           Enter address ids as contract address and token id separated by `_`
         </p>
         <HeadlessField className="grid grid-cols-12 gap-6 p-4 border-2 border-gray-200 col-span-11">
           <div className="col-span-5">
-            <Description className="mt-1 text-text" >
+            <Description className="mt-1 text-text dark:text-dark-text">
               Enter address ids to add to the gallery.
             </Description>
           </div>
@@ -892,9 +916,9 @@ const Index = () => {
         </HeadlessField>
 
         <Button
-          variant="primary"
+          variant=""
           size="medium"
-          className="p-1 h-8 m-4 col-span-1 bg-button"
+          className="p-1 h-8 m-4 col-span-1 "
           onClick={() => setTriggerEffect((prev) => prev + 1)}
           disabled={isDisabled}
         >
@@ -903,7 +927,7 @@ const Index = () => {
         <p className=" text-red-600 pb-2">{errorsAddAddresses}</p>
         <HeadlessField className="grid grid-cols-12 gap-6 p-4 border-2 border-gray-200 col-span-11 col-start-1">
           <div className="col-span-5">
-            <Description className="mt-1 text-text" >
+            <Description className="mt-1 text-text dark:text-dark-text">
               Enter address ids to remove from the gallery.
             </Description>
           </div>
@@ -920,9 +944,9 @@ const Index = () => {
         </HeadlessField>
 
         <Button
-          variant="primary"
+          variant=""
           size="medium"
-          className="p-1 h-8 m-4 col-span-1 bg-button"
+          className="p-1 h-8 m-4 col-span-1 "
           onClick={handleRemoveAddresses}
           disabled={isDisabled}
         >
@@ -931,7 +955,7 @@ const Index = () => {
         <p className=" text-red-600 pb-2">{errorsRemoveAddresses}</p>
         <HeadlessField className="grid grid-cols-12 gap-6 p-4 border-2 border-gray-200 col-span-11 col-start-1">
           <div className="col-span-5">
-            <Description className="mt-1 text-text" >
+            <Description className="mt-1 text-text dark:text-dark-text">
               Enter address ids to export to a new keys file.
             </Description>
           </div>
@@ -948,9 +972,9 @@ const Index = () => {
         </HeadlessField>
 
         <Button
-          variant="primary"
+          variant=""
           size="medium"
-          className="p-1 h-8 m-4 col-span-1 bg-button"
+          className="p-1 h-8 m-4 col-span-1 "
           onClick={handleExportKeys}
           disabled={isDisabled}
         >
@@ -960,7 +984,7 @@ const Index = () => {
 
         <HeadlessField className="grid grid-cols-12 gap-6 p-4 border-2 border-gray-200 col-span-11 col-start-1">
           <div className="col-span-5">
-            <Description className="mt-1 text-text" >
+            <Description className="mt-1 text-text dark:text-dark-text">
               Browse to keys file to import. To import subset, enter address
               ids. Leave blank to import all keys.
             </Description>
@@ -985,9 +1009,9 @@ const Index = () => {
           accept=".json"
         />
         <Button
-          variant="primary"
+          variant=""
           size="medium"
-          className="p-1 h-8 m-4 col-span-1 bg-button"
+          className="p-1 h-8 m-4 col-span-1 "
           onClick={handleButtonImportKeys}
           disabled={isDisabled}
         >
