@@ -165,8 +165,7 @@ const Index = () => {
     getContractAddressesCurrencies,
   } = useContractUtils();
 
-  const { unlockVideoFromController, unlockNestableKeysFromController } =
-    useNFTMedia();
+  const { unlockVideoFromController, unlockNestableKeysFromController } = useNFTMedia();
 
   const userAuthPub = useRecoilValue(userauthpubstate);
   const { mutate: deleteNFT, ...deleteNFTInfo } = useDeleteNFT(userAuthPub);
