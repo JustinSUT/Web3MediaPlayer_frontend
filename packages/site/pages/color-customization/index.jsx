@@ -8,7 +8,8 @@ import { ChevronDoubleLeftIcon } from '@heroicons/react/24/solid';
 import { TextLink } from '../../src/ui-components/text';
 import useCreateUser from '../../src/hooks/useCreateUser';
 import { Button } from '../../src/ui-components/button';
-import { Select, SelectItem } from '@nextui-org/react';
+import { Select, SelectItem, Avatar } from '@nextui-org/react';
+import ColorSelect from '../../src/ui-components/colorSelect';
 
 let url = process.env.NEXT_PUBLIC_FABSTIRDB_BACKEND_URL || '';
 
@@ -205,9 +206,6 @@ const ColorCustomization = () => {
     router.push('/');
   };
 
-  useEffect(() => {
-    console.log('selectedColors.darkButtonTextColor', selectedColors);
-  }, [selectedColors]);
   return (
     <React.Fragment>
       <div className="flex justify-start ml-4">
@@ -250,67 +248,14 @@ const ColorCustomization = () => {
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Dark Button Text Color
                 </label>
-                <Select
-                  items={darkThemeColor}
-                  aria-label="Select Dark Button Text Color"
+                <ColorSelect
+                  label="Dark Button Text Color"
                   value={selectedColors.darkButtonTextColor}
-                  classNames={{
-                    label: 'group-data-[filled=true]:-translate-y-5',
-                    trigger: 'min-h-16 bg-gray-300	rounded',
-                    listboxWrapper: 'max-h-[400px] ',
-                  }}
-                  name="darkButtonTextColor"
-                  listboxProps={{
-                    itemClasses: {
-                      base: [
-                        'rounded-md',
-                        'text-default-500',
-                        'transition-opacity',
-                        'data-[hover=true]:text-foreground',
-                        'data-[hover=true]:bg-default-100',
-                        'dark:data-[hover=true]:bg-default-50',
-                        'data-[selectable=true]:focus:bg-default-50',
-                        'data-[pressed=true]:opacity-70',
-                        'data-[focus-visible=true]:ring-default-500',
-                      ],
-                    },
-                  }}
-                  popoverProps={{
-                    classNames: {
-                      base: 'before:bg-default-200',
-                      content: 'p-0 border-small border-divider bg-background',
-                    },
-                  }}
                   onChange={(value) => setValue('darkButtonTextColor', value)}
-                  {...register('darkButtonTextColor', { required: true })}
-                  // renderValue={(items) => {
-                  //   return items.map((item) => (
-                  //     <div className="flex gap-2 items-center">
-                  //       <div
-                  //         className="h-10 w-10"
-                  //         style={{ backgroundColor: item.value }}
-                  //       ></div>
-                  //       <div className="flex flex-col">{item.label}</div>
-                  //     </div>
-                  //   ));
-                  // }}
-                >
-                  {darkThemeColor.map((color) => (
-                    <SelectItem
-                      key={color.value}
-                      value={color.value}
-                      textValue={color.label}
-                    >
-                      <div className="flex gap-2 items-center">
-                        <div
-                          className="h-10 w-10"
-                          style={{ backgroundColor: color.value }}
-                        ></div>
-                        <div className="flex flex-col">{color.label}</div>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </Select>
+                  colors={darkThemeColor}
+                  register={register}
+                  name="darkButtonTextColor"
+                />
                 {errors.darkButtonTextColor && (
                   <p className="text-red-500 text-xs mt-1">
                     This field is required
@@ -349,6 +294,19 @@ const ColorCustomization = () => {
                       content: 'p-0 border-small border-divider bg-background',
                     },
                   }}
+                  renderValue={(items) => {
+                    return items.map((color) => (
+                      <div key={color.key} className="flex gap-2 items-center">
+                        <div
+                          className="h-10 w-10 ml-5"
+                          style={{ backgroundColor: color.props.value }}
+                        ></div>
+                        <div className="flex flex-col">
+                          {color.props.textValue}
+                        </div>
+                      </div>
+                    ));
+                  }}
                   onChange={(value) => setValue('darkButtonColor', value)}
                   {...register('darkButtonColor', { required: true })}
                 >
@@ -360,7 +318,7 @@ const ColorCustomization = () => {
                     >
                       <div className="flex gap-2 items-center">
                         <div
-                          className="h-10 w-10"
+                          className="h-10 w-10 ml-5"
                           style={{ backgroundColor: color.value }}
                         ></div>
                         <div className="flex flex-col">{color.label}</div>
@@ -406,6 +364,19 @@ const ColorCustomization = () => {
                       content: 'p-0 border-small border-divider bg-background',
                     },
                   }}
+                  renderValue={(items) => {
+                    return items.map((color) => (
+                      <div key={color.key} className="flex gap-2 items-center">
+                        <div
+                          className="h-10 w-10 ml-5"
+                          style={{ backgroundColor: color.props.value }}
+                        ></div>
+                        <div className="flex flex-col">
+                          {color.props.textValue}
+                        </div>
+                      </div>
+                    ));
+                  }}
                   onChange={(value) => setValue('darkTextColor', value)}
                   {...register('darkTextColor', { required: true })}
                 >
@@ -417,7 +388,7 @@ const ColorCustomization = () => {
                     >
                       <div className="flex gap-2 items-center">
                         <div
-                          className="h-10 w-10"
+                          className="h-10 w-10 ml-5"
                           style={{ backgroundColor: color.value }}
                         ></div>
                         <div className="flex flex-col">{color.label}</div>
@@ -463,6 +434,19 @@ const ColorCustomization = () => {
                       content: 'p-0 border-small border-divider bg-background',
                     },
                   }}
+                  renderValue={(items) => {
+                    return items.map((color) => (
+                      <div key={color.key} className="flex gap-2 items-center">
+                        <div
+                          className="h-10 w-10 ml-5"
+                          style={{ backgroundColor: color.props.value }}
+                        ></div>
+                        <div className="flex flex-col">
+                          {color.props.textValue}
+                        </div>
+                      </div>
+                    ));
+                  }}
                   onChange={(value) => setValue('darkBackgroundColor', value)}
                   {...register('darkBackgroundColor', { required: true })}
                 >
@@ -474,7 +458,7 @@ const ColorCustomization = () => {
                     >
                       <div className="flex gap-2 items-center">
                         <div
-                          className="h-10 w-10"
+                          className="h-10 w-10 ml-5"
                           style={{ backgroundColor: color.value }}
                         ></div>
                         <div className="flex flex-col">{color.label}</div>
@@ -522,6 +506,19 @@ const ColorCustomization = () => {
                       content: 'p-0 border-small border-divider bg-background',
                     },
                   }}
+                  renderValue={(items) => {
+                    return items.map((color) => (
+                      <div key={color.key} className="flex gap-2 items-center">
+                        <div
+                          className="h-10 w-10 ml-5"
+                          style={{ backgroundColor: color.props.value }}
+                        ></div>
+                        <div className="flex flex-col">
+                          {color.props.textValue}
+                        </div>
+                      </div>
+                    ));
+                  }}
                   onChange={(value) => setValue('lightButtonTextColor', value)}
                   {...register('lightButtonTextColor')}
                 >
@@ -533,7 +530,7 @@ const ColorCustomization = () => {
                     >
                       <div className="flex gap-2 items-center">
                         <div
-                          className="h-10 w-10"
+                          className="h-10 w-10 ml-5"
                           style={{ backgroundColor: color.value }}
                         ></div>
                         <div className="flex flex-col">{color.label}</div>
@@ -579,6 +576,19 @@ const ColorCustomization = () => {
                       content: 'p-0 border-small border-divider bg-background',
                     },
                   }}
+                  renderValue={(items) => {
+                    return items.map((color) => (
+                      <div key={color.key} className="flex gap-2 items-center">
+                        <div
+                          className="h-10 w-10 ml-5"
+                          style={{ backgroundColor: color.props.value }}
+                        ></div>
+                        <div className="flex flex-col">
+                          {color.props.textValue}
+                        </div>
+                      </div>
+                    ));
+                  }}
                   onChange={(value) => setValue('lightButtonColor', value)}
                   {...register('lightButtonColor')}
                 >
@@ -590,7 +600,7 @@ const ColorCustomization = () => {
                     >
                       <div className="flex gap-2 items-center">
                         <div
-                          className="h-10 w-10"
+                          className="h-10 w-10 ml-5"
                           style={{ backgroundColor: color.value }}
                         ></div>
                         <div className="flex flex-col">{color.label}</div>
@@ -636,6 +646,19 @@ const ColorCustomization = () => {
                       content: 'p-0 border-small border-divider bg-background',
                     },
                   }}
+                  renderValue={(items) => {
+                    return items.map((color) => (
+                      <div key={color.key} className="flex gap-2 items-center">
+                        <div
+                          className="h-10 w-10 ml-5"
+                          style={{ backgroundColor: color.props.value }}
+                        ></div>
+                        <div className="flex flex-col">
+                          {color.props.textValue}
+                        </div>
+                      </div>
+                    ));
+                  }}
                   onChange={(value) => setValue('lightTextColor', value)}
                   {...register('lightTextColor')}
                 >
@@ -647,7 +670,7 @@ const ColorCustomization = () => {
                     >
                       <div className="flex gap-2 items-center">
                         <div
-                          className="h-10 w-10"
+                          className="h-10 w-10 ml-5"
                           style={{ backgroundColor: color.value }}
                         ></div>
                         <div className="flex flex-col">{color.label}</div>
@@ -693,6 +716,19 @@ const ColorCustomization = () => {
                       content: 'p-0 border-small border-divider bg-background',
                     },
                   }}
+                  renderValue={(items) => {
+                    return items.map((color) => (
+                      <div key={color.key} className="flex gap-2 items-center">
+                        <div
+                          className="h-10 w-10 ml-5"
+                          style={{ backgroundColor: color.props.value }}
+                        ></div>
+                        <div className="flex flex-col">
+                          {color.props.textValue}
+                        </div>
+                      </div>
+                    ));
+                  }}
                   onChange={(value) => setValue('lightBackgroundColor', value)}
                   {...register('lightBackgroundColor')}
                 >
@@ -704,7 +740,7 @@ const ColorCustomization = () => {
                     >
                       <div className="flex gap-2 items-center">
                         <div
-                          className="h-10 w-10"
+                          className="h-10 w-10 ml-5"
                           style={{ backgroundColor: color.value }}
                         ></div>
                         <div className="flex flex-col">{color.label}</div>
@@ -729,7 +765,6 @@ const ColorCustomization = () => {
             </div>
           </form>
         </div>
-        {/* Preview Section */}
         <div
           className="mt-10 p-4 rounded-md"
           style={{
@@ -757,6 +792,61 @@ const ColorCustomization = () => {
           </button>
         </div>
       </div>
+      {/* <Select
+        items={lightThemeColor}
+        label="Select a color"
+        className="max-w-xs"
+        variant="bordered"
+        classNames={{
+          label: 'group-data-[filled=true]:-translate-y-5',
+          trigger: 'min-h-16',
+          listboxWrapper: 'max-h-[400px]',
+        }}
+        listboxProps={{
+          itemClasses: {
+            base: [
+              'rounded-md',
+              'text-default-500',
+              'transition-opacity',
+              'data-[hover=true]:text-foreground',
+              'data-[hover=true]:bg-default-100',
+              'dark:data-[hover=true]:bg-default-50',
+              'data-[selectable=true]:focus:bg-default-50',
+              'data-[pressed=true]:opacity-70',
+              'data-[focus-visible=true]:ring-default-500',
+            ],
+          },
+        }}
+        popoverProps={{
+          classNames: {
+            base: 'before:bg-default-200',
+            content: 'p-0 border-small border-divider bg-background',
+          },
+        }}
+        renderValue={(items) => {
+          return items.map((color) => (
+            <div key={color.value} className="flex gap-2 items-center">
+              <div
+                className="h-6 w-6"
+                style={{ backgroundColor: color.data.value }}
+              ></div>
+              <div className="text-sm">{color.data.label}</div>
+            </div>
+          ));
+        }}
+      >
+        {(color) => (
+          <SelectItem key={color.value} textValue={color.label}>
+            <div className="flex gap-2 items-center">
+              <div
+                className="h-6 w-6"
+                style={{ backgroundColor: color.value }}
+              ></div>
+              <div className="text-sm">{color.label}</div>
+            </div>
+          </SelectItem>
+        )}
+      </Select> */}
     </React.Fragment>
   );
 };

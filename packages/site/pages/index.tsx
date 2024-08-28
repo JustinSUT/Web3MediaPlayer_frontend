@@ -67,6 +67,30 @@ import UserProfile from './profile';
 import { useMintNestableERC1155NFT } from '../src/blockchain/useMintNestableERC1155NFT';
 import { ThemeContext } from '../src/components/ThemeContext';
 
+const defaultColors = {
+  lightButtonTextColor: '#000000', // Black text for light mode buttons
+  lightButtonColor: '#ffffff', // White button color for light mode
+  lightButtonHoverColor: '#f0f0f0', // Slightly darker white on hover
+  lightButtonHoverTextColor: '#000000', // Black text on hover
+  lightButtonShadow: '#d1d1d1', // Light gray shadow for light buttons
+  lightTextColor: '#333333', // Dark gray for light mode text
+  lightBackgroundColor: '#f9f9f9', // Very light gray background
+  lightSuccessTextColor: '#28a745', // Green text for success messages
+  lightWarningTextColor: '#ffc107', // Yellow text for warnings
+  lightErrorTextColor: '#dc3545', // Red text for errors
+
+  darkButtonTextColor: '#ffffff', // White text for dark mode buttons
+  darkButtonColor: '#333333', // Dark gray button color for dark mode
+  darkButtonHoverColor: '#444444', // Slightly lighter gray on hover
+  darkButtonHoverTextColor: '#ffffff', // White text on hover
+  darkButtonShadow: '#222222', // Darker gray shadow for dark buttons
+  darkTextColor: '#f9f9f9', // Very light gray for dark mode text
+  darkBackgroundColor: '#121212', // Very dark background
+  darkSuccessTextColor: '#28a745', // Green text for success messages
+  darkWarningTextColor: '#ffc107', // Yellow text for warnings
+  darkErrorTextColor: '#dc3545', // Red text for errors
+};
+
 type Addresses = {
   [key: string]: any; // Replace `any` with the actual type of the values
 };
@@ -750,31 +774,35 @@ const Index = () => {
     }
   };
 
-  useLayoutEffect(() => {
-    document.documentElement.style.setProperty(
-      '--button-color',
-      colors?.buttonColor ?? "#007bff" // Light mode button color
-    );
-    document.documentElement.style.setProperty(
-      '--background-color',
-      colors?.backgroundColor ?? "#f8f9fa" // Light mode background color
-    );
-    document.documentElement.style.setProperty(
-      '--text-color',
-      colors?.textColor ?? "#212529" // Light mode text color
-    );
-    document.documentElement.style.setProperty(
-      '--dark-button-color',
-      colors?.darkButtonColor ?? "#1d72b8" // Dark mode button color
-    );
-    document.documentElement.style.setProperty(
-      '--dark-background-color',
-      colors?.darkBackgroundColor ?? "#1c1c1c" // Dark mode background color
-    );
-    document.documentElement.style.setProperty(
-      '--dark-text-color',
-      colors?.darkTextColor ?? "#e0e0e0" // Dark mode text color
-    );
+  useEffect(() => {
+    // List of color keys for both light and dark modes
+    const colorKeys = [
+      'ButtonTextColor',
+      'ButtonColor',
+      'ButtonHoverColor',
+      'ButtonHoverTextColor',
+      'ButtonShadow',
+      'TextColor',
+      'BackgroundColor',
+      'SuccessTextColor',
+      'WarningTextColor',
+      'ErrorTextColor',
+    ];
+  
+    // Iterate through light mode and dark mode keys
+    colorKeys.forEach((key) => {
+      const lightColor = colors[`light${key}`] || defaultColors[`light${key}`];
+      const darkColor = colors[`dark${key}`] || defaultColors[`dark${key}`];
+  
+      document.documentElement.style.setProperty(
+        `--light${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`,
+        lightColor,
+      );
+      document.documentElement.style.setProperty(
+        `--dark${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`,
+        darkColor,
+      );
+    });
   }, [colors]);
   
   
@@ -850,7 +878,7 @@ const Index = () => {
           className="ml-4 "
         />
         <ButtonLink
-          href="/color-customization"
+          href="/color-customization/color"
           label="Color Customization"
           isDisabled={isDisabled}
           className="ml-4 "
