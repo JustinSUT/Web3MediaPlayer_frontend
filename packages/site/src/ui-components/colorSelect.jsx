@@ -1,17 +1,30 @@
 import React from 'react';
 import { Select, SelectItem } from '@nextui-org/react';
 
-const ColorSelect = ({ label, value, onChange, colors, register, name, errors }) => {
+const ColorSelect = ({
+  label,
+  value,
+  onChange,
+  colors,
+  register,
+  name,
+  errors,
+}) => {
+  console.log('Current value:', value);
+  console.log('Available colors:', colors);
+
   return (
     <React.Fragment>
-      <label htmlFor={name} className="mb-2 font-medium">{label}</label>
+      <label htmlFor={name} className="mb-2 font-medium">
+        {label}
+      </label>
       <Select
         id={name}
         aria-label={label}
         value={value}
+        onChange={(val) => onChange(val)}
+        {...register(name, { required: true })}
         items={colors}
-        onChange={(value) => onChange(value)}
-        {...register(`${name}`, { required: true })}
         classNames={{
           label: 'group-data-[filled=true]:-translate-y-5',
           trigger: 'min-h-14 bg-neutral-300 rounded-md',
@@ -42,7 +55,7 @@ const ColorSelect = ({ label, value, onChange, colors, register, name, errors })
           return items.map((color) => (
             <div key={color.key} className="flex gap-2 items-center">
               <div
-                className="h-10 w-10 ml-5"
+                className="h-8 w-8  rounded-full"
                 style={{ backgroundColor: color.props.value }}
               ></div>
               <div className="flex flex-col">{color.props.textValue}</div>
@@ -58,7 +71,7 @@ const ColorSelect = ({ label, value, onChange, colors, register, name, errors })
           >
             <div className="flex gap-2 items-center">
               <div
-                className="h-10 w-10 ml-5"
+                className="h-8 w-8  rounded-full"
                 style={{ backgroundColor: color.value }}
               ></div>
               <div className="flex flex-col">{color.label}</div>
@@ -66,9 +79,11 @@ const ColorSelect = ({ label, value, onChange, colors, register, name, errors })
           </SelectItem>
         ))}
       </Select>
-      {errors[`${name}`] && (
-        <p className="text-red-500 text-xs mt-1 absolute left-3 -bottom-1.5">This field is required</p>
-      )}
+      {/* {errors[name] && (
+        <p className="text-red-500 text-xs mt-1 absolute left-3 -bottom-1.5">
+          This field is required
+        </p>
+      )} */}
     </React.Fragment>
   );
 };

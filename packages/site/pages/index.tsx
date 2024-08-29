@@ -1,4 +1,10 @@
-import React, { useContext, useState, useEffect, useRef, useLayoutEffect } from 'react';
+import React, {
+  useContext,
+  useState,
+  useEffect,
+  useRef,
+  useLayoutEffect,
+} from 'react';
 const Gun = require('gun');
 const SEA = require('gun/sea');
 import axios from 'axios';
@@ -72,23 +78,25 @@ const defaultColors = {
   lightButtonColor: '#ffffff', // White button color for light mode
   lightButtonHoverColor: '#f0f0f0', // Slightly darker white on hover
   lightButtonHoverTextColor: '#000000', // Black text on hover
-  lightButtonShadow: '#d1d1d1', // Light gray shadow for light buttons
+  lightButtonShadow: '', // Light gray shadow for light buttons
   lightTextColor: '#333333', // Dark gray for light mode text
   lightBackgroundColor: '#f9f9f9', // Very light gray background
   lightSuccessTextColor: '#28a745', // Green text for success messages
   lightWarningTextColor: '#ffc107', // Yellow text for warnings
   lightErrorTextColor: '#dc3545', // Red text for errors
+  lightAllowShadow: false,
 
   darkButtonTextColor: '#ffffff', // White text for dark mode buttons
   darkButtonColor: '#333333', // Dark gray button color for dark mode
   darkButtonHoverColor: '#444444', // Slightly lighter gray on hover
   darkButtonHoverTextColor: '#ffffff', // White text on hover
-  darkButtonShadow: '#222222', // Darker gray shadow for dark buttons
+  darkButtonShadow: '', // Darker gray shadow for dark buttons
   darkTextColor: '#f9f9f9', // Very light gray for dark mode text
   darkBackgroundColor: '#121212', // Very dark background
   darkSuccessTextColor: '#28a745', // Green text for success messages
   darkWarningTextColor: '#ffc107', // Yellow text for warnings
   darkErrorTextColor: '#dc3545', // Red text for errors
+  darkAllowShadow: false,
 };
 
 type Addresses = {
@@ -104,7 +112,7 @@ const Index = () => {
   const [removeAddresses, setRemoveAddresses] = useState<string>('');
   const [importKeys, setImportKeys] = useState<string>('');
   const [exportKeys, setExportKeys] = useState<string>('');
-  const [colors, setColors] = useState<any>({});
+  const [colors, setColors] = useState<any>(defaultColors);
   const [userData, setUserData] = useState<any | null>(null);
   const fileImportKeysRef = useRef<HTMLInputElement>(null);
 
@@ -189,7 +197,8 @@ const Index = () => {
     getContractAddressesCurrencies,
   } = useContractUtils();
 
-  const { unlockVideoFromController, unlockNestableKeysFromController } = useNFTMedia();
+  const { unlockVideoFromController, unlockNestableKeysFromController } =
+    useNFTMedia();
 
   const userAuthPub = useRecoilValue(userauthpubstate);
   const { mutate: deleteNFT, ...deleteNFTInfo } = useDeleteNFT(userAuthPub);
@@ -775,36 +784,43 @@ const Index = () => {
   };
 
   useEffect(() => {
-    // List of color keys for both light and dark modes
     const colorKeys = [
-      'ButtonTextColor',
+      'TextColor',
       'ButtonColor',
+      'ButtonTextColor',
       'ButtonHoverColor',
       'ButtonHoverTextColor',
       'ButtonShadow',
-      'TextColor',
       'BackgroundColor',
       'SuccessTextColor',
       'WarningTextColor',
       'ErrorTextColor',
+      'AllowShadow',
     ];
   
-    // Iterate through light mode and dark mode keys
     colorKeys.forEach((key) => {
-      const lightColor = colors[`light${key}`] || defaultColors[`light${key}`];
-      const darkColor = colors[`dark${key}`] || defaultColors[`dark${key}`];
+      const lightKey = `--light${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
+      const darkKey = `--dark${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
   
-      document.documentElement.style.setProperty(
-        `--light${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`,
-        lightColor,
-      );
-      document.documentElement.style.setProperty(
-        `--dark${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`,
-        darkColor,
-      );
+      if (key === 'ButtonShadow') {
+        console.log("colors.lightAllowShadow",colors.lightAllowShadow,lightKey)
+        console.log("colors.darkAllowShadow",colors.darkAllowShadow,darkKey)
+        if (colors.lightAllowShadow) {
+          document.documentElement.style.setProperty(lightKey, colors[`light${key}`]);
+        }else{
+          document.documentElement.style.setProperty(lightKey, "");
+        }
+        if (colors.darkAllowShadow) {
+          document.documentElement.style.setProperty(darkKey, colors[`dark${key}`]);
+        }else{
+          document.documentElement.style.setProperty(darkKey,"");
+        }
+      } else {
+        document.documentElement.style.setProperty(lightKey, colors[`light${key}`]);
+        document.documentElement.style.setProperty(darkKey, colors[`dark${key}`]);
+      }
     });
   }, [colors]);
-  
   
 
   return (
@@ -843,7 +859,9 @@ const Index = () => {
       </button> */}
       {loading && <p>Loading Smart Account...</p>}
       {smartAccount && (
-        <h2 className="text-text dark:text-dark-text">Smart Account: {smartAccountAddress}</h2>
+        <h2 className="text-text dark:text-dark-text">
+          Smart Account: {smartAccountAddress}
+        </h2>
       )}
       {smartAccount && (
         <Button
@@ -878,7 +896,7 @@ const Index = () => {
           className="ml-4 "
         />
         <ButtonLink
-          href="/color-customization/color"
+          href="/color-customization"
           label="Color Customization"
           isDisabled={isDisabled}
           className="ml-4 "
