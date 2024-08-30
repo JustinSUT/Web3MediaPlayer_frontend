@@ -59,6 +59,7 @@
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.2.3",
     "react-is": "^18.2.0",
+    "react-toastify": "^10.0.5",
     "recoil": "^0.7.7",
     "recoil-persist": "^5.1.0",
     "s5client-js": "https://github.com/parajbs-dev/s5client-js.git#test_15_encryptWasm_4_2",
