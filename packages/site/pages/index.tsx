@@ -869,7 +869,7 @@ const Index = () => {
           className="ml-4 "
         />
         <ButtonLink
-          href="/color-customization/color"
+          href="/color-customization"
           label="Color Customization"
           isDisabled={isDisabled}
           className="ml-4 "
