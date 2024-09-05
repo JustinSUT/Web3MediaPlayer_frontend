@@ -218,10 +218,10 @@ const Index = () => {
   useEffect(() => {
     // Ensure this code runs only on the client side
     // if (typeof window !== 'undefined') {
-      const session = sessionStorage.getItem('userSession');
-      if (session) {
-        setUserData(JSON.parse(session));
-      }
+    const session = sessionStorage.getItem('userSession');
+    if (session) {
+      setUserData(JSON.parse(session));
+    }
     // }
   }, []);
 
@@ -755,14 +755,16 @@ const Index = () => {
   const fetchColor = async () => {
     try {
       if (!userData?.token || !smartAccountAddress) return;
+
       const response = await axios.get(`${url}/color/${smartAccountAddress}`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${userData?.token}`,
         },
       });
+
       const { primaryColor, secondaryColor, utilityColors, neutralsColor } =
-        response.data.document[0] ?? {};
+        response.data.document?.[0] ?? {};
 
       const setCSSVariables = (colorObj: any, prefix = '') => {
         if (!colorObj) return;
@@ -774,32 +776,104 @@ const Index = () => {
           );
         });
       };
-      // Setting the primary colors
-      setCSSVariables(primaryColor, '');
 
-      // Setting the secondary colors
-      setCSSVariables(secondaryColor, '');
-
-      // Setting the utility colors (e.g., success, warning, error)
-      setCSSVariables(utilityColors, '');
-
-      // Setting the neutral colors for light and dark modes
-      setCSSVariables(neutralsColor.light, 'light-');
-      setCSSVariables(neutralsColor.dark, 'dark-');
+      if (primaryColor || secondaryColor || utilityColors || neutralsColor) {
+        // Set API returned colors if they exist
+        setCSSVariables(primaryColor, '');
+        setCSSVariables(secondaryColor, '');
+        setCSSVariables(utilityColors, '');
+        setCSSVariables(neutralsColor?.light, 'light-');
+        setCSSVariables(neutralsColor?.dark, 'dark-');
+      } else {
+        // No data from API, set default dark and light mode colors
+        setDefaultColors();
+      }
     } catch (error) {
       console.log('error:', error);
       // handleError(error);
+      setDefaultColors(); // Set default colors in case of an error
     }
   };
 
-  useEffect(() => {
-    console.log('userData', userData);
-    console.log('smartAccountAddress', smartAccountAddress);
+  const setDefaultColors = () => {
+    const defaultColors = {
+      light: {
+        '--primary-color': '#181a1b',
+        '--primary-content-color': '#f8f8f8',
+        '--primary-dark-color': '#4a4b4c',
+        '--primary-light-color': '#000000',
+        
+        '--secondary-color': '#d0d3cd',
+        '--secondary-content-color': '#aaaaaa',
+        '--secondary-dark-color': '#252627',
+        '--secondary-light-color': '#f78fa7',
+        
+        '--success-color': '#4a4b4c',
+        '--success-content-color': '#f8f8f8',
+        
+        '--warning-color': '#f78fa7',
+        '--warning-content-color': '#f8f8f8',
+        
+        '--error-color': '#ff6b6b',
+        '--error-content-color': '#f8f8f8',
+        
+        '--light-foreground': '#fbfbfb',
+        '--light-background': '#f8f8f8',
+        '--light-border': '#e0dde2',
+    
+        '--light-copy': '#f8f8f8',
+        '--light-copy-light': '#000000',
+        '--light-copy-lighter': '#aaaaaa',
+      },
+      dark: {
+        '--primary-color': '#b3bdc2',
+        '--primary-content-color': '#f8f8f8',
+        '--primary-dark-color': '#4a4b4c',
+        '--primary-light-color': '#d0d3cd',
+        
+        '--secondary-color': '#d0d3cd',
+        '--secondary-content-color': '#aaaaaa',
+        '--secondary-dark-color': '#252627',
+        '--secondary-light-color': '#f78fa7',
+        
+        '--success-color': '#4a4b4c',
+        '--success-content-color': '#f8f8f8',
+        
+        '--warning-color': '#f78fa7',
+        '--warning-content-color': '#f8f8f8',
+        
+        '--error-color': '#ff6b6b',
+        '--error-content-color': '#f8f8f8',
+    
+        '--dark-foreground': '#2c292d',
+        '--dark-background': '#181a1b',
+        '--dark-border': '#3f3b42',
+    
+        '--dark-copy': '#f8f8f8',
+        '--dark-copy-light': '#d0d3cd',
+        '--dark-copy-lighter': '#aaaaaa',
+      },
+    };
+    
 
+    // Set light mode colors
+    Object.entries(defaultColors.light).forEach(([key, value]) => {
+      document.documentElement.style.setProperty(key, value as string);
+    });
+
+    // Set dark mode colors
+    Object.entries(defaultColors.dark).forEach(([key, value]) => {
+      document.documentElement.style.setProperty(key, value as string);
+    });
+  };
+
+  useEffect(() => {
     if (smartAccountAddress && userData) {
       fetchColor();
+    } else {
+      setDefaultColors();
     }
-  }, [userData,smartAccountAddress]);
+  }, [userData, smartAccountAddress]);
   return (
     <div className="p-4 max-w-6xl mx-auto bg-background  dark:bg-dark-background text-copy dark:text-dark-copy">
       <h1 className="uppercase text-2xl font-bold mb-5">Web3 Media Player</h1>
