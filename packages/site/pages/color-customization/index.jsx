@@ -16,20 +16,20 @@ let url = process.env.NEXT_PUBLIC_FABSTIRDB_BACKEND_URL || '';
 
 const defaultColors = {
   light: {
-    background: '#eaf0f5',
-    foreground: '#fafbfd',
-    border: '#d4dfea',
-    copy: '#192634',
-    copyLight: '#42668a',
-    copyLighter: '#648cb4',
+    background: '#f0f0f0',
+    foreground: '#fbfbfb',
+    border: '#dfdfdf',
+    copy: '#262626',
+    copyLight: '#666666',
+    copyLighter: '#8c8c8c',
   },
   dark: {
-    background: '#111a22',
-    foreground: '#192634',
-    border: '#294056',
-    copy: '#fafbfd',
-    copyLight: '#cbd9e6',
-    copyLighter: '#87a6c5',
+    background: '#1a1a1a',
+    foreground: '#262626',
+    border: '#404040',
+    copy: '#fbfbfb',
+    copyLight: '#d9d9d9',
+    copyLighter: '#a6a6a6',
   },
 };
 
@@ -41,6 +41,7 @@ const Color = () => {
   const { signOut } = useCreateUser();
   const [smartAccountAddress, setSmartAccountAddress] = useState('');
   const [showPicker, setShowPicker] = useState(false);
+  const [showPickerSecondary, setShowPickerSecondary] = useState(false);
   const [colorMode, setColorMode] = useState('light'); // 'light' or 'dark'
   const [saturation, setSaturation] = useState(0); // Default saturation value
   const [hueRotation, setHueRotation] = useState(90);
@@ -67,10 +68,6 @@ const Color = () => {
   });
   const [neutralsColorState, setNeutralsColorState] = useState(defaultColors);
 
-  const handleButtonClick = () => {
-    setShowPicker(!showPicker);
-  };
-
   useEffect(() => {
     const setSmartAccountAddressFn = async () => {
       if (smartAccount) {
@@ -82,12 +79,8 @@ const Color = () => {
     setSmartAccountAddressFn();
   }, [smartAccount]);
 
-  const handleColorChange = (newColor) => {
+  const handlePrimaryColorChange = (newColor) => {
     const updatedPrimaryColor = newColor.hex;
-    const updatedSecondaryColor = chroma(newColor.hex)
-      .set('hsl.h', `+${hueRotation}`)
-      .hex();
-
     const isLightColor = chroma(updatedPrimaryColor).luminance() > 0.5;
 
     setPrimaryColorState({
@@ -97,15 +90,6 @@ const Color = () => {
         : chroma(updatedPrimaryColor).brighten(3).hex(),
       primaryLightColor: chroma(updatedPrimaryColor).brighten(1.5).hex(),
       primaryDarkColor: chroma(updatedPrimaryColor).darken(1).hex(),
-    });
-
-    setSecondaryColorState({
-      secondaryColor: updatedSecondaryColor,
-      secondaryContentColor: isLightColor
-        ? chroma(updatedSecondaryColor).darken(2).hex()
-        : chroma(updatedSecondaryColor).brighten(3).hex(),
-      secondaryLightColor: chroma(updatedSecondaryColor).brighten(1.5).hex(),
-      secondaryDarkColor: chroma(updatedSecondaryColor).darken(1).hex(),
     });
 
     setUtilityColors({
@@ -128,24 +112,19 @@ const Color = () => {
         ? chroma(updatedPrimaryColor).set('hsl.h', 0).brighten(3).hex() // Darker in light mode
         : chroma(updatedPrimaryColor).set('hsl.h', 0).darken(2).hex(), // Less bright in dark mode
     });
+  };
 
-    setNeutralsColorState({
-      light: {
-        foreground: blendWithPrimary(defaultColors.light.foreground),
-        background: blendWithPrimary(defaultColors.light.background),
-        border: blendWithPrimary(defaultColors.light.border),
-        copy: blendWithPrimary(defaultColors.light.copy),
-        copyLight: blendWithPrimary(defaultColors.light.copyLight),
-        copyLighter: blendWithPrimary(defaultColors.light.copyLighter),
-      },
-      dark: {
-        foreground: blendWithPrimary(defaultColors.dark.foreground),
-        background: blendWithPrimary(defaultColors.dark.background),
-        border: blendWithPrimary(defaultColors.dark.border),
-        copy: blendWithPrimary(defaultColors.dark.copy),
-        copyLight: blendWithPrimary(defaultColors.dark.copyLight),
-        copyLighter: blendWithPrimary(defaultColors.dark.copyLighter),
-      },
+  const handleSecondaryColorChange = (newColor) => {
+    const updatedSecondaryColor = newColor.hex;
+    const isLightColor = chroma(updatedSecondaryColor).luminance() > 0.5;
+
+    setSecondaryColorState({
+      secondaryColor: updatedSecondaryColor,
+      secondaryContentColor: isLightColor
+        ? chroma(updatedSecondaryColor).darken(2).hex()
+        : chroma(updatedSecondaryColor).brighten(3).hex(),
+      secondaryLightColor: chroma(updatedSecondaryColor).brighten(1.5).hex(),
+      secondaryDarkColor: chroma(updatedSecondaryColor).darken(1).hex(),
     });
   };
 
@@ -175,31 +154,36 @@ const Color = () => {
 
   const handleSaturation = (value) => {
     setSaturation(value);
-    setNeutralsColorState({
-      light: {
-        foreground: blendWithPrimary(defaultColors.light.foreground),
-        background: blendWithPrimary(defaultColors.light.background),
-        border: blendWithPrimary(defaultColors.light.border),
-        copy: blendWithPrimary(defaultColors.light.copy),
-        copyLight: blendWithPrimary(defaultColors.light.copyLight),
-        copyLighter: blendWithPrimary(defaultColors.light.copyLighter),
-      },
-      dark: {
-        foreground: blendWithPrimary(defaultColors.dark.foreground),
-        background: blendWithPrimary(defaultColors.dark.background),
-        border: blendWithPrimary(defaultColors.dark.border),
-        copy: blendWithPrimary(defaultColors.dark.copy),
-        copyLight: blendWithPrimary(defaultColors.dark.copyLight),
-        copyLighter: blendWithPrimary(defaultColors.dark.copyLighter),
-      },
-    });
+    if (value == 0) {
+      setNeutralsColorState(defaultColors);
+    } else {
+      setNeutralsColorState({
+        light: {
+          foreground: blendWithPrimary(defaultColors.light.foreground, 2),
+          background: blendWithPrimary(defaultColors.light.background, 2),
+          border: blendWithPrimary(defaultColors.light.border, 2),
+          copy: blendWithPrimary(defaultColors.light.copy, 1),
+          copyLight: blendWithPrimary(defaultColors.light.copyLight, 2),
+          copyLighter: blendWithPrimary(defaultColors.light.copyLighter, 5),
+        },
+        dark: {
+          foreground: blendWithPrimary(defaultColors.dark.foreground, 2),
+          background: blendWithPrimary(defaultColors.dark.background, 2),
+          border: blendWithPrimary(defaultColors.dark.border, 2),
+          copy: blendWithPrimary(defaultColors.dark.copy, 1),
+          copyLight: blendWithPrimary(defaultColors.dark.copyLight, 2),
+          copyLighter: blendWithPrimary(defaultColors.dark.copyLighter, 5),
+        },
+      });
+    }
   };
 
-  const blendWithPrimary = (color) => {
+  const blendWithPrimary = (color, amount) => {
     return chroma
       .mix(color, primaryColorState.primaryColor, 0.1)
-      .saturate(saturation)
-      .hex();
+      .saturate(saturation * amount) // Increase saturation
+      .brighten(saturation / 10) // Lighten the color based on saturation level
+      .hex(); // Return the hex value
   };
 
   const onSubmit = async () => {
@@ -213,7 +197,6 @@ const Color = () => {
       data.neutralsColor = neutralsColorState;
       const userData = sessionStorage.getItem('userSession');
       const token = JSON.parse(userData)?.token ?? '';
-      console.log('data', data);
       await axios.post(`${url}/color`, data, {
         headers: {
           'Content-Type': 'application/json',
@@ -273,10 +256,6 @@ const Color = () => {
             `--${prefix}${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`,
             colorObj[key],
           );
-          console.log(
-            'color:',
-            `--${prefix}${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`,
-          );
         });
       };
       // Setting the primary colors
@@ -311,7 +290,11 @@ const Color = () => {
       ) : (
         <div className="mx-auto w-3/5 pt-5">
           <div className="flex relative mb-10 ">
-            <div className="flex justify-start ml-4 absolute left-0 bg-primary text-primary-content p-2 rounded-md">
+            <div
+              className="flex justify-start ml-4 absolute left-0 bg-primary text-primary-content hover:bg-primary-light 
+        active:bg-primary-dark focus:ring-2 focus:ring-primary-dark 
+        disabled:bg-primary-light/50 shadow-md p-2 rounded-md"
+            >
               <TextLink className="no-underline	" href="/">
                 <div className="flex items-center">
                   <ChevronDoubleLeftIcon
@@ -345,7 +328,7 @@ const Color = () => {
               <div className="relative mb-4">
                 <button
                   className="flex w-full items-center rounded-full p-1 shadow-xl transition-colors"
-                  onClick={handleButtonClick}
+                  onClick={() => setShowPicker(!showPicker)}
                   style={{
                     color: primaryColorState.primaryContentColor,
                     border: '2px solid rgb(194, 215, 235)',
@@ -380,7 +363,7 @@ const Color = () => {
                   <div className="absolute mt-2 z-10">
                     <ChromePicker
                       color={primaryColorState.primaryColor}
-                      onChange={handleColorChange}
+                      onChange={handlePrimaryColorChange}
                     />
                   </div>
                 )}
@@ -455,7 +438,7 @@ const Color = () => {
                   Secondary brand color, used for tertiary actions.
                 </p>
               </div>
-              <div
+              {/* <div
                 style={{
                   color: secondaryColorState.secondaryContentColor,
                   border: '2px solid rgb(214, 194, 235)',
@@ -499,6 +482,49 @@ const Color = () => {
                 >
                   hue degrees
                 </label>
+              </div> */}
+              <div className="relative mb-4">
+                <button
+                  className="flex w-full items-center rounded-full p-1 shadow-xl transition-colors"
+                  onClick={() => setShowPickerSecondary(!showPickerSecondary)}
+                  style={{
+                    color: secondaryColorState.secondaryContentColor,
+                    border: '2px solid rgb(194, 215, 235)',
+                    background: secondaryColorState.secondaryColor,
+                  }}
+                  aria-label="Select Secondary Color"
+                >
+                  <div
+                    className="grid h-8 w-8 place-content-center rounded-full"
+                    style={{
+                      color: secondaryColorState.secondaryColor,
+                      background: secondaryColorState.secondaryContentColor,
+                    }}
+                  >
+                    <svg
+                      stroke="currentColor"
+                      fill="currentColor"
+                      strokeWidth="0"
+                      viewBox="0 0 16 16"
+                      height="1em"
+                      width="1em"
+                    >
+                      <path d="M13.354.646a1.207 1.207 0 0 0-1.708 0L8.5 3.793l-.646-.647a.5.5 0 1 0-.708.708L8.293 5l-7.147 7.146A.5.5 0 0 0 1 12.5v1.793l-.854.853a.5.5 0 1 0 .708.707L1.707 15H3.5a.5.5 0 0 0 .354-.146L11 7.707l1.146 1.147a.5.5 0 0 0 .708-.708l-.647-.646 3.147-3.146a1.207 1.207 0 0 0 0-1.708l-2-2zM2 12.707l7-7L10.293 7l-7 7H2v-1.293z"></path>
+                    </svg>
+                  </div>
+                  <span className="w-full text-center">
+                    {secondaryColorState.secondaryColor}
+                  </span>
+                </button>
+
+                {showPickerSecondary && (
+                  <div className="absolute mt-2 z-10">
+                    <ChromePicker
+                      color={secondaryColorState.secondaryColor}
+                      onChange={handleSecondaryColorChange}
+                    />
+                  </div>
+                )}
               </div>
             </div>
             <div className="grid grid-cols-3 gap-4">
@@ -590,7 +616,7 @@ const Color = () => {
                   step=".025"
                   className="w-full"
                   value={saturation}
-                  onChange={(e) => handleSaturation(e.target.value)}
+                  onChange={(e) => handleSaturation(parseFloat(e.target.value))} // Ensure value is parsed as float
                 />
               </div>
               <div
@@ -834,7 +860,9 @@ const Color = () => {
           </div>
           <div className="w-full text-right py-5 border-t-2 border-slate-200">
             <button
-              className=" bg-primary rounded px-4 py-3 text-primary-content text-lg font-medium"
+              className=" bg-primary text-primary-content hover:bg-primary-light 
+        active:bg-primary-dark focus:ring-2 focus:ring-primary-dark 
+        disabled:bg-primary-light/50 shadow-md rounded px-4 py-3 text-lg font-medium"
               onClick={() => onSubmit()}
             >
               Save Changes
