@@ -632,7 +632,7 @@ const Index = () => {
         eoaAddress = userAccountAddress;
         setSmartAccountAddress(userAccountAddress);
       }
-      fetchColor();
+      // fetchColor();
       await loginFabstirDB(userAccountAddress, eoaAddress);
     } catch (e) {
       const errorMessage = 'index: connect: error received';
@@ -809,7 +809,7 @@ const Index = () => {
 
   useEffect(() => {
     if (smartAccountAddress) {
-      fetchColor();
+      // fetchColor();
     } else {
       setDefaultColors();
     }

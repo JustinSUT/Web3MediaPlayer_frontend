@@ -11,7 +11,8 @@ import chroma from 'chroma-js';
 import axios from 'axios';
 import { TextLink } from '../../src/ui-components/text';
 import { ChevronDoubleLeftIcon } from 'heroiconsv1/solid';
-
+// import IPFS from 'ipfs';
+import { colorDb, dbClient } from '../../src/GlobalOrbit';
 let url = process.env.NEXT_PUBLIC_FABSTIRDB_BACKEND_URL || '';
 
 const defaultColors = {
@@ -45,7 +46,7 @@ const Color = () => {
   const [colorMode, setColorMode] = useState('light'); // 'light' or 'dark'
   const [saturation, setSaturation] = useState(0); // Default saturation value
   const [hueRotation, setHueRotation] = useState(90);
-  const [loader, setLoader] = useState(true);
+  const [loader, setLoader] = useState(false);
   const [primaryColorState, setPrimaryColorState] = useState({
     primaryColor: '#4699eb',
     primaryContentColor: '#05192d',
@@ -186,27 +187,47 @@ const Color = () => {
       .hex(); // Return the hex value
   };
 
+  // Create a function to handle setting data with a promise
+  const setWithPromise = (db, data) => {
+    return new Promise((resolve, reject) => {
+      db.put(data, (err) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+    });
+  };
+
   const onSubmit = async () => {
     try {
       toast.dismiss();
-      let data = {};
-      data.smartAccount = smartAccountAddress;
-      data.primaryColor = primaryColorState;
-      data.secondaryColor = secondaryColorState;
-      data.utilityColors = utilityColors;
-      data.neutralsColor = neutralsColorState;
-      const userData = sessionStorage.getItem('userSession');
-      const token = JSON.parse(userData)?.token ?? '';
-      await axios.post(`${url}/color`, data, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      });
+
+      const data = {
+        smartAccount: smartAccountAddress,
+        primaryColor: primaryColorState,
+        secondaryColor: secondaryColorState,
+        utilityColors: utilityColors,
+        neutralsColor: neutralsColorState,
+      };
+
+      // Define the path for the database
+      const path = `colors`;
+      const colors = dbClient.get(path);
+
+      // Set data in the database
+      await setWithPromise(colors, data);
+      console.log('Data saved successfully in the database');
+
+      // Provide user feedback
       toast.success('Color saved successfully');
       fetchColor();
     } catch (error) {
-      handleError(error);
+      // Improved error handling
+      console.error('Error in onSubmit:', error);
+      fetchColor();
+      // toast.error('Failed to save color. Please try again.');
     }
   };
 
@@ -235,19 +256,19 @@ const Color = () => {
 
   const fetchColor = async () => {
     setLoader(true);
-    const userData = sessionStorage.getItem('userSession');
-    const token = JSON.parse(userData)?.token ?? '';
     try {
       if (!smartAccountAddress) return;
-      const response = await axios.get(`${url}/color/${smartAccountAddress}`, {
-        headers: {
-          'Content-Type': 'application/json',
-          // Authorization: `Bearer ${token}`,
-        },
-      });
-      const { primaryColor, secondaryColor, utilityColors, neutralsColor } =
-        response.data.document[0] ?? {};
+      const path = `colors/${smartAccountAddress}`;
 
+      const response = await new Promise((res) =>
+        dbClient.get(path).once((final_value) => res(final_value)),
+      );
+      console.log('response', response);
+
+      const { primaryColor, secondaryColor, utilityColors, neutralsColor } =
+        response ?? {};
+
+      // Function to set CSS variables
       const setCSSVariables = (colorObj, prefix = '') => {
         if (!colorObj) return;
 
@@ -258,20 +279,15 @@ const Color = () => {
           );
         });
       };
-      // Setting the primary colors
+
+      // Set CSS variables for colors
       setCSSVariables(primaryColor, '');
-
-      // Setting the secondary colors
       setCSSVariables(secondaryColor, '');
-
-      // Setting the utility colors (e.g., success, warning, error)
       setCSSVariables(utilityColors, '');
+      setCSSVariables(neutralsColor?.light, 'light-');
+      setCSSVariables(neutralsColor?.dark, 'dark-');
 
-      // Setting the neutral colors for light and dark modes
-      setCSSVariables(neutralsColor.light, 'light-');
-      setCSSVariables(neutralsColor.dark, 'dark-');
-
-      // Save to state
+      // Save colors to state
       setPrimaryColorState(primaryColor);
       setSecondaryColorState(secondaryColor);
       setUtilityColors(utilityColors);
