@@ -15,16 +15,16 @@
     "snap.manifest.json"
   ],
   "scripts": {
-    "build": "mm-snap build",
-    "build:clean": "yarn clean && yarn build",
+    "build": "node init && mm-snap build",
+    "build:clean": "node init && yarn clean && yarn build",
     "clean": "rimraf dist",
-    "dev": "mm-snap watch",
+    "dev": "node init && mm-snap watch",
     "lint": "yarn lint:eslint && yarn lint:misc --check",
     "lint:eslint": "eslint . --cache --ext js,ts",
     "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
     "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path .gitignore",
     "serve": "mm-snap serve",
-    "start": "mm-snap watch",
+    "start": "node init && mm-snap watch",
     "test": "jest"
   },
   "dependencies": {

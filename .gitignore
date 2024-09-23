@@ -67,7 +67,6 @@ node_modules/
 .yarn-integrity
 
 # dotenv environment variables file
-.env*
 !.env.template
 
 # Stores VSCode versions used for testing VSCode extensions
@@ -92,8 +91,6 @@ packages/site/node_modules/
 /out
 
 # dotenv environment variables file
-.env
-.env.test
 .env.hardhat
 .env.amoy
 .env.base_sepolia
@@ -107,7 +104,6 @@ yarn-debug.log*
 yarn-error.log*
 
 # IDE - VSCode
-.vscode
 
 # operating system
 .DS_Store
@@ -125,3 +121,4 @@ packages/site/.env.local
 packages/site/assets/
 start-chrome-debug.bat
 *.xlsx
+config.bat

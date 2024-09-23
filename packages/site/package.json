@@ -4,13 +4,13 @@
   "private": true,
   "license": "(MIT-0 OR Apache-2.0)",
   "scripts": {
-    "build": "next build",
-    "dev": "next dev",
+    "build": "node init && next build",
+    "dev": "node init && next dev",
     "lint": "yarn lint:eslint && yarn lint:misc --check",
     "lint:eslint": "eslint . --cache",
     "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
     "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path .gitignore",
-    "start": "next start",
+    "start": "node init && next start",
     "debug": "cross-env NODE_OPTIONS='--inspect=9240' next dev"
   },
   "dependencies": {

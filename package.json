@@ -17,14 +17,14 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "yarn workspaces foreach --parallel --topological --verbose run build",
-    "dev": "yarn workspaces foreach --parallel --interlaced --verbose run dev",
+    "build": "node init && yarn workspaces foreach --parallel --topological --verbose run build",
+    "dev": "node init && yarn workspaces foreach --parallel --interlaced --verbose run dev",
     "install-chrome": "./scripts/install-chrome.sh",
     "lint": "yarn lint:eslint && yarn lint:misc --check",
     "lint:eslint": "eslint . --cache --ext js,ts",
     "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
     "lint:misc": "prettier '**/*.json' '**/*.md' '!**/CHANGELOG.md' '**/*.yml' --ignore-path .gitignore",
-    "start": "yarn workspaces foreach --parallel --interlaced --verbose run start",
+    "start": "node init && yarn workspaces foreach --parallel --interlaced --verbose run start",
     "test": "echo \"TODO\""
   },
   "devDependencies": {
