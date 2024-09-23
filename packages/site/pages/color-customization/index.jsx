@@ -43,7 +43,7 @@ const Color = () => {
   const [showPickerSecondary, setShowPickerSecondary] = useState(false);
   const [colorMode, setColorMode] = useState('light'); // 'light' or 'dark'
   const [saturation, setSaturation] = useState(0); // Default saturation value
-  const [loader, setLoader] = useState(false);
+  const [loader, setLoader] = useState(true);
   const [primaryColorState, setPrimaryColorState] = useState({
     primaryColor: '#4699eb',
     primaryContentColor: '#05192d',
@@ -69,6 +69,12 @@ const Color = () => {
   useEffect(() => {
     if (userAuthPub) {
       fetchColor();
+    } else {
+      setCSSVariables(primaryColorState, '');
+      setCSSVariables(secondaryColorState, '');
+      setCSSVariables(utilityColors, '');
+      setCSSVariables(neutralsColorState?.light, 'light-');
+      setCSSVariables(neutralsColorState?.dark, 'dark-');
     }
   }, [userAuthPub]);
 
